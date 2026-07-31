@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Music Mantis – Streaming musik gratis tanpa iklan. Jutaan lagu dari Jamendo, video populer, dan Live TV Indonesia dalam satu app." />
+  <meta name="theme-color" content="#6d28d9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta property="og:title" content="Music Mantis – Streaming Gratis Tanpa Iklan" />
+  <meta property="og:description" content="Musik, Video & Live TV premium, 100% gratis tanpa iklan." />
+  <title>Music Mantis – Streaming Gratis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       RESET & TOKENS
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:           #07071a;
+      --surface:      #0d0d22;
+      --card:         #13132e;
+      --card2:        #191935;
+      --accent:       #7c3aed;
+      --accent2:      #6d28d9;
+      --accent-light: #a78bfa;
+      --accent-glow:  rgba(124,58,237,.35);
+      --green:        #10b981;
+      --red:          #ef4444;
+      --orange:       #f59e0b;
+      --cyan:         #06b6d4;
+      --text:         #f0f0f8;
+      --text2:        #8b8ba8;
+      --border:       rgba(255,255,255,.06);
+      --radius:       16px;
+      --player-h:     74px;
+      --nav-h:        68px;
+    }
+    html, body {
+      height: 100%;
+      background: #030310;
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+    }
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    @media (min-width: 481px) {
+      body { background: radial-gradient(ellipse at 50% -10%, rgba(109,40,217,.18) 0%, #030310 55%); }
+      #app { box-shadow: 0 0 100px rgba(109,40,217,.18), inset 0 0 0 1px rgba(255,255,255,.03); }
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px;
+      flex-shrink: 0;
+      position: relative; z-index: 10;
+      background: linear-gradient(180deg, rgba(109,40,217,.08) 0%, transparent 100%);
+    }
+    header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px;
+      box-shadow: 0 4px 18px var(--accent-glow);
+    }
+    .logo-name {
+      font-size: 17px; font-weight: 800;
+      background: linear-gradient(135deg, #c4b5fd 0%, #67e8f9 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .logo-tag { font-size: 9px; color: var(--text2); font-weight: 500; letter-spacing: .3px; }
+    .premium-badge {
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      color: #fff; font-size: 9px; font-weight: 800;
+      padding: 5px 12px; border-radius: 20px; letter-spacing: .6px;
+    }
+
+    /* ============================================================
+       PAGES
+    ============================================================ */
+    #pages { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+    .page { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; }
+    .page.active { display: flex; animation: pageIn .22s ease; }
+    @keyframes pageIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+    .scroll-content { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 8px; }
+    .scroll-content::-webkit-scrollbar { display: none; }
+
+    /* ============================================================
+       HOME
+    ============================================================ */
+    .home-hero {
+      margin: 14px 14px 0;
+      padding: 26px 22px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #1e0a4a 0%, #0c1840 50%, #041e2a 100%);
+      position: relative; overflow: hidden;
+    }
+    .home-hero::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,.45) 0%, transparent 70%);
+    }
+    .home-hero::after {
+      content: ''; position: absolute; bottom: -30px; left: -30px;
+      width: 140px; height: 140px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,182,212,.3) 0%, transparent 70%);
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(16,185,129,.15); border: 1px solid rgba(16,185,129,.3);
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 10px; font-weight: 700; color: #6ee7b7;
+      letter-spacing: .5px; margin-bottom: 12px; position: relative; z-index: 1;
+    }
+    .hero-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: heropin 1.4s ease infinite; }
+    @keyframes heropin { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .hero-title {
+      font-size: 23px; font-weight: 900; line-height: 1.28;
+      position: relative; z-index: 1; margin-bottom: 8px;
+    }
+    .hero-sub {
+      font-size: 12px; color: #93c5fd; line-height: 1.65;
+      position: relative; z-index: 1; margin-bottom: 20px;
+    }
+    .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+    .hero-chip {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.1); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.15); color: #fff;
+      padding: 8px 16px; border-radius: 24px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all .2s; font-family: inherit;
+    }
+    .hero-chip:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+
+    /* Section */
+    .section { padding: 0 14px; margin-top: 24px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .section-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .see-all { font-size: 12px; color: var(--accent-light); cursor: pointer; font-weight: 600; }
+    .see-all:hover { color: var(--accent); }
+
+    /* Action grid */
+    .action-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .action-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 10px;
+      text-align: center; cursor: pointer; transition: all .2s;
+    }
+    .action-card:hover, .action-card:active {
+      border-color: var(--accent); transform: scale(1.03);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+    .action-icon { font-size: 30px; margin-bottom: 8px; }
+    .action-name { font-size: 12px; font-weight: 700; }
+    .action-sub { font-size: 10px; color: var(--text2); margin-top: 2px; }
+
+    /* Horizontal scroll */
+    .h-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+    .h-scroll::-webkit-scrollbar { display: none; }
+
+    /* Live quick cards */
+    .live-quick-card {
+      flex-shrink: 0; width: 118px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 12px;
+      cursor: pointer; transition: all .2s;
+    }
+    .live-quick-card:hover { border-color: var(--red); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(239,68,68,.18); }
+    .lqc-icon { font-size: 26px; margin-bottom: 8px; }
+    .lqc-live { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+    .live-dot-small { width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: blink1 1.2s infinite; }
+    @keyframes blink1 { 0%,100%{opacity:1} 50%{opacity:.2} }
+    .live-label-small { font-size: 9px; font-weight: 800; color: var(--red); }
+    .lqc-name { font-size: 12px; font-weight: 700; }
+
+    /* ============================================================
+       TRACK ITEM (shared)
+    ============================================================ */
+    .track-list { display: flex; flex-direction: column; gap: 2px; }
+    .track-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 10px; border-radius: 12px;
+      cursor: pointer; transition: background .15s;
+    }
+    .track-item:hover, .track-item:active { background: var(--card); }
+    .track-item.playing { background: rgba(124,58,237,.12); border-left: 3px solid var(--accent); padding-left: 7px; }
+    .track-cover {
+      width: 46px; height: 46px; border-radius: 10px;
+      object-fit: cover; flex-shrink: 0; background: var(--card2);
+    }
+    .track-cover-placeholder {
+      width: 46px; height: 46px; border-radius: 10px; flex-shrink: 0;
+      display: none; align-items: center; justify-content: center;
+      font-size: 20px; background: var(--card2);
+    }
+    .track-info { flex: 1; min-width: 0; }
+    .track-name {
+      font-size: 14px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .track-name.active-track { color: var(--accent-light); }
+    .track-artist {
+      font-size: 11px; color: var(--text2); margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .track-dur { font-size: 11px; color: var(--text2); flex-shrink: 0; }
+    .play-btn-small {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: none; background: var(--card2); color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; transition: all .2s; flex-shrink: 0;
+    }
+    .play-btn-small:hover { background: var(--accent); }
+    .play-btn-small.playing-btn { background: var(--accent); }
+
+    /* ============================================================
+       MUSIC PAGE
+    ============================================================ */
+    #music { overflow: hidden; }
+    .music-header { padding: 16px 16px 10px; flex-shrink: 0; }
+    .music-header h2 { font-size: 26px; font-weight: 900; margin-bottom: 14px; }
+    .search-bar {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 11px 14px; transition: border-color .2s;
+    }
+    .search-bar:focus-within { border-color: var(--accent); }
+    .search-bar input {
+      flex: 1; background: none; border: none; outline: none;
+      color: var(--text); font-family: inherit; font-size: 14px;
+    }
+    .search-bar input::placeholder { color: var(--text2); }
+    .search-go {
+      background: var(--accent); border: none; border-radius: 9px;
+      color: #fff; padding: 6px 14px; font-size: 12px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .search-go:hover { background: var(--accent2); }
+
+    .genres-row { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 6px; flex-shrink: 0; }
+    .genres-row::-webkit-scrollbar { display: none; }
+    .genre-chip {
+      display: flex; align-items: center; gap: 5px;
+      padding: 8px 16px; border-radius: 24px;
+      background: var(--card); border: 1px solid var(--border);
+      font-size: 12px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: all .2s; color: var(--text2);
+    }
+    .genre-chip.active, .genre-chip:hover {
+      background: rgba(124,58,237,.18); border-color: var(--accent); color: var(--accent-light);
+    }
+    .tracks-area { flex: 1; overflow-y: auto; padding: 6px 14px 8px; }
+    .tracks-area::-webkit-scrollbar { display: none; }
+
+    /* Loading / Error */
+    .loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 50px; gap: 14px;
+      color: var(--text2); font-size: 13px;
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-state { padding: 28px 20px; text-align: center; }
+    .error-state .ei { font-size: 42px; margin-bottom: 12px; }
+    .error-state h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .error-state p { font-size: 12px; color: var(--text2); line-height: 1.7; }
+    .retry-btn {
+      margin-top: 16px; padding: 10px 26px;
+      background: var(--accent); border: none; border-radius: 12px;
+      color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit;
+    }
+
+    /* ============================================================
+       VIDEO PAGE
+    ============================================================ */
+    #video { overflow-y: auto; }
+    #video::-webkit-scrollbar { display: none; }
+    .video-content { padding: 14px; display: flex; flex-direction: column; gap: 18px; }
+    .video-section-label {
+      font-size: 11px; font-weight: 800; color: var(--text2);
+      text-transform: uppercase; letter-spacing: .6px;
+      display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+    }
+    .video-item {
+      border-radius: 14px; overflow: hidden;
+      aspect-ratio: 16/9; width: 100%;
+      background: #000; box-shadow: 0 6px 24px rgba(0,0,0,.5);
+    }
+    .video-item iframe { width: 100%; height: 100%; border: none; display: block; }
+    .video-meta { margin-top: 8px; }
+    .video-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .video-ch { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+    /* ============================================================
+       LIVE TV PAGE
+    ============================================================ */
+    #live { display: flex; flex-direction: column; overflow: hidden; }
+    .live-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 10px; flex-shrink: 0;
+    }
+    .live-header h2 { font-size: 22px; font-weight: 900; }
+    .live-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3);
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .live-dot-anim {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+      animation: liveblink 1.2s ease infinite;
+    }
+    @keyframes liveblink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.25;transform:scale(.75)} }
+    .live-badge-text { font-size: 11px; font-weight: 800; color: var(--red); }
+
+    .channel-bar { display: flex; gap: 8px; padding: 0 14px 10px; overflow-x: auto; flex-shrink: 0; }
+    .channel-bar::-webkit-scrollbar { display: none; }
+    .ch-btn {
+      display: flex; align-items: center; gap: 5px; white-space: nowrap;
+      padding: 8px 16px; border-radius: 24px; font-size: 12px; font-weight: 700;
+      cursor: pointer; border: 1px solid var(--border); background: var(--card);
+      color: var(--text2); font-family: inherit; transition: all .2s; flex-shrink: 0;
+    }
+    .ch-btn.active { background: rgba(239,68,68,.14); border-color: var(--red); color: #fff; }
+    .ch-btn:hover:not(.active) { border-color: var(--text2); color: var(--text); }
+    .live-frame {
+      flex: 1; min-height: 0; background: #000;
+      border-radius: 18px; overflow: hidden; margin: 0 14px 14px;
+    }
+    .live-frame iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    /* ============================================================
+       MINI PLAYER
+    ============================================================ */
+    #mini-player {
+      position: absolute;
+      bottom: var(--nav-h);
+      left: 0; right: 0;
+      height: var(--player-h);
+      background: rgba(13,13,34,.96);
+      backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(124,58,237,.2);
+      display: none; align-items: center;
+      padding: 0 14px; gap: 12px;
+      z-index: 50; cursor: pointer;
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    #mini-player.visible { display: flex; }
+    .mini-cover-wrap { width: 46px; height: 46px; border-radius: 10px; flex-shrink: 0; overflow: hidden; background: var(--card2); display:flex; align-items:center; justify-content:center; font-size:22px; }
+    .mini-cover-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .mini-info { flex: 1; min-width: 0; }
+    .mini-title { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-artist { font-size: 11px; color: var(--text2); }
+    .mini-controls { display: flex; align-items: center; gap: 6px; }
+    .mini-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: none; color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; transition: color .15s;
+    }
+    .mini-btn:hover { color: var(--accent-light); }
+    .mini-play-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      border: none; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 17px;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .mini-progress { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--border); }
+    .mini-progress-fill { height: 100%; background: var(--accent); transition: width .5s linear; }
+
+    /* ============================================================
+       FULL PLAYER
+    ============================================================ */
+    #full-player {
+      position: absolute; inset: 0;
+      background: rgba(7,7,26,.97); backdrop-filter: blur(32px);
+      z-index: 100; display: none; flex-direction: column; align-items: center;
+      padding: 56px 28px 36px;
+    }
+    #full-player.visible { display: flex; animation: slideUp .32s cubic-bezier(.34,1.4,.64,1); }
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .fp-back {
+      position: absolute; top: 18px; left: 16px;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 17px; transition: all .2s;
+    }
+    .fp-back:hover { border-color: var(--accent); }
+    .fp-label {
+      position: absolute; top: 26px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: .5px; text-transform: uppercase;
+    }
+
+    .fp-cover-wrap {
+      width: 220px; height: 220px; border-radius: 22px;
+      background: var(--card); overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 72px; margin-bottom: 28px;
+      flex-shrink: 0;
+    }
+    .fp-cover-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+    .fp-info { text-align: center; margin-bottom: 22px; width: 100%; }
+    .fp-title { font-size: 21px; font-weight: 800; margin-bottom: 6px; line-height: 1.2; }
+    .fp-artist { font-size: 14px; color: var(--text2); }
+
+    .fp-progress-wrap { width: 100%; margin-bottom: 18px; cursor: pointer; }
+    .fp-progress-bar { height: 5px; background: var(--card2); border-radius: 3px; overflow: hidden; margin-bottom: 7px; }
+    .fp-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      transition: width .5s linear;
+    }
+    .fp-times { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); }
+
+    .fp-controls {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; margin-bottom: 26px;
+    }
+    .fp-ctrl {
+      width: 46px; height: 46px; border-radius: 50%; border: none;
+      background: none; color: var(--text2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 22px; transition: color .2s;
+    }
+    .fp-ctrl:hover { color: var(--text); }
+    .fp-ctrl.on { color: var(--accent-light); }
+    .fp-play {
+      width: 66px; height: 66px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      border: none; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 26px;
+      box-shadow: 0 8px 28px var(--accent-glow);
+      transition: transform .15s;
+    }
+    .fp-play:active { transform: scale(.93); }
+
+    .fp-extras { display: flex; justify-content: center; gap: 30px; }
+    .fp-extra {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer; font-size: 22px; color: var(--text2); transition: color .2s;
+    }
+    .fp-extra:hover { color: var(--accent-light); }
+    .fp-extra span { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+
+    /* ============================================================
+       BOTTOM NAV
+    ============================================================ */
+    nav {
+      height: var(--nav-h); background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 8px;
+      flex-shrink: 0; position: relative; z-index: 40;
+    }
+    .nav-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 4px; padding: 6px 4px;
+      border-radius: 14px; cursor: pointer; border: none; background: none;
+      color: var(--text2); font-family: inherit; transition: all .2s;
+    }
+    .nav-btn.active { color: var(--accent-light); }
+    .nav-btn.active .nav-icon { filter: drop-shadow(0 0 8px rgba(167,139,250,.55)); }
+    .nav-btn:hover:not(.active) { color: var(--text); }
+    .nav-icon { font-size: 22px; line-height: 1; }
+    .nav-label { font-size: 9px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.09); border-radius: 4px; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🎵</div>
+      <div>
+        <div class="logo-name">Music Mantis</div>
+        <div class="logo-tag">Streaming Gratis · Tanpa Iklan</div>
+      </div>
+    </div>
+    <span class="premium-badge">✦ FREE</span>
+  </header>
+
+  <!-- ===== PAGES ===== -->
+  <div id="pages">
+
+    <!-- ═══════════════ HOME ═══════════════ -->
+    <div id="home" class="page active">
+      <div class="scroll-content">
+        <div style="padding-bottom: 20px;">
+
+          <!-- Hero -->
+          <div class="home-hero">
+            <div class="hero-eyebrow"><div class="hero-dot"></div>ONLINE · SELALU UPDATE</div>
+            <div class="hero-title">🎶 Streaming Premium<br>100% Gratis &amp; Tanpa Iklan!</div>
+            <div class="hero-sub">Nikmati jutaan lagu original dari Jamendo,<br>video populer, dan siaran TV langsung.</div>
+            <div class="hero-chips">
+              <button class="hero-chip" onclick="go('music')">🎵 Musik Gratis</button>
+              <button class="hero-chip" onclick="go('video')">🎬 Video</button>
+              <button class="hero-chip" onclick="go('live')">📺 Live TV</button>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">🚀 Fitur Utama</div>
+            </div>
+            <div class="action-grid">
+              <div class="action-card" onclick="go('music')">
+                <div class="action-icon">🎵</div>
+                <div class="action-name">Musik</div>
+                <div class="action-sub">No Ads · Legal</div>
+              </div>
+              <div class="action-card" onclick="go('video')">
+                <div class="action-icon">🎬</div>
+                <div class="action-name">Video</div>
+                <div class="action-sub">HD Quality</div>
+              </div>
+              <div class="action-card" onclick="go('live')">
+                <div class="action-icon">📡</div>
+                <div class="action-name">Live TV</div>
+                <div class="action-sub">Siaran Langsung</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trending Tracks -->
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">🔥 Trending Musik</div>
+              <span class="see-all" onclick="go('music')">Semua →</span>
+            </div>
+            <div id="home-tracks" class="track-list">
+              <div class="loading"><div class="spinner"></div>Memuat dari Jamendo...</div>
+            </div>
+          </div>
+
+          <!-- Live TV Quick -->
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">🔴 Live TV Sekarang</div>
+              <span class="see-all" onclick="go('live')">Semua →</span>
+            </div>
+            <div class="h-scroll">
+              <div class="live-quick-card" onclick="goTV('lofi')">
+                <div class="lqc-icon">🎶</div>
+                <div class="lqc-live"><div class="live-dot-small"></div><span class="live-label-small">LIVE</span></div>
+                <div class="lqc-name">Lofi Girl</div>
+              </div>
+              <div class="live-quick-card" onclick="goTV('nasa')">
+                <div class="lqc-icon">🚀</div>
+                <div class="lqc-live"><div class="live-dot-small"></div><span class="live-label-small">LIVE</span></div>
+                <div class="lqc-name">NASA Live</div>
+              </div>
+              <div class="live-quick-card" onclick="goTV('jazz')">
+                <div class="lqc-icon">🎷</div>
+                <div class="lqc-live"><div class="live-dot-small"></div><span class="live-label-small">LIVE</span></div>
+                <div class="lqc-name">Jazz Radio</div>
+              </div>
+              <div class="live-quick-card" onclick="goTV('tvri')">
+                <div class="lqc-icon">📺</div>
+                <div class="lqc-live"><div class="live-dot-small"></div><span class="live-label-small">LIVE</span></div>
+                <div class="lqc-name">TVRI</div>
+              </div>
+              <div class="live-quick-card" onclick="goTV('metro')">
+                <div class="lqc-icon">📰</div>
+                <div class="lqc-live"><div class="live-dot-small"></div><span class="live-label-small">LIVE</span></div>
+                <div class="lqc-name">Metro TV</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ MUSIC ═══════════════ -->
+    <div id="music" class="page">
+      <div class="music-header">
+        <h2>🎵 Musik</h2>
+        <div class="search-bar">
+          <span style="font-size:16px;">🔍</span>
+          <input type="text" id="music-search" placeholder="Cari artis, judul lagu..." />
+          <button class="search-go" onclick="doSearch()">Cari</button>
+        </div>
+      </div>
+      <div class="genres-row">
+        <div class="genre-chip active" onclick="setGenre(this,'')">⭐ Semua</div>
+        <div class="genre-chip" onclick="setGenre(this,'pop')">🎤 Pop</div>
+        <div class="genre-chip" onclick="setGenre(this,'electronic')">⚡ Electronic</div>
+        <div class="genre-chip" onclick="setGenre(this,'rock')">🎸 Rock</div>
+        <div class="genre-chip" onclick="setGenre(this,'ambient')">🌊 Ambient</div>
+        <div class="genre-chip" onclick="setGenre(this,'jazz')">🎷 Jazz</div>
+        <div class="genre-chip" onclick="setGenre(this,'hiphop')">🎤 Hip-hop</div>
+        <div class="genre-chip" onclick="setGenre(this,'classical')">🎻 Classical</div>
+        <div class="genre-chip" onclick="setGenre(this,'folk')">🪕 Folk</div>
+      </div>
+      <div class="tracks-area" id="music-tracks">
+        <div class="loading"><div class="spinner"></div>Memuat musik...</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ VIDEO ═══════════════ -->
+    <div id="video" class="page">
+      <div id="video" style="flex:1;overflow-y:auto;">
+        <div class="video-content" style="padding-top:16px;">
+
+          <div>
+            <div class="video-section-label">🔥 Musik Populer Dunia</div>
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/CuklIb9d3fI?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-meta"><div class="video-title">Blinding Lights – The Weeknd</div><div class="video-ch">Official Video</div></div>
+          </div>
+
+          <div>
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/4NRXx6U8ABQ?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-meta"><div class="video-title">Shape of You – Ed Sheeran</div><div class="video-ch">Official Video</div></div>
+          </div>
+
+          <div>
+            <div class="video-section-label" style="margin-top:4px;">🇮🇩 Hits Indonesia</div>
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/RubBzkZzpUA?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-meta"><div class="video-title">Raisa – Kali Kedua</div><div class="video-ch">Official MV</div></div>
+          </div>
+
+          <div>
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/Ta-3KT8bBZI?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-meta"><div class="video-title">Sheila On 7 – Angie</div><div class="video-ch">Official MV</div></div>
+          </div>
+
+          <div>
+            <div class="video-section-label" style="margin-top:4px;">🌍 Trending Global</div>
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/9bZkp7q19f0?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-meta"><div class="video-title">Gangnam Style – PSY</div><div class="video-ch">Official MV</div></div>
+          </div>
+
+          <div>
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/JGwWNGJdvx8?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-meta"><div class="video-title">Ed Sheeran – Perfect</div><div class="video-ch">Official MV</div></div>
+          </div>
+
+          <div>
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/kffacxfA7G4?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-meta"><div class="video-title">Happy – Pharrell Williams</div><div class="video-ch">Official MV</div></div>
+          </div>
+
+          <div style="height:16px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ LIVE TV ═══════════════ -->
+    <div id="live" class="page">
+      <div class="live-header">
+        <h2>📺 Live TV</h2>
+        <div class="live-badge">
+          <div class="live-dot-anim"></div>
+          <span class="live-badge-text">ON AIR</span>
+        </div>
+      </div>
+      <div class="channel-bar">
+        <button class="ch-btn active" id="ch-lofi"   onclick="setChannel(this,'lofi')">🎶 Lofi Girl</button>
+        <button class="ch-btn"        id="ch-nasa"   onclick="setChannel(this,'nasa')">🚀 NASA Live</button>
+        <button class="ch-btn"        id="ch-jazz"   onclick="setChannel(this,'jazz')">🎷 Jazz Radio</button>
+        <button class="ch-btn"        id="ch-tvri"   onclick="setChannel(this,'tvri')">📺 TVRI</button>
+        <button class="ch-btn"        id="ch-metro"  onclick="setChannel(this,'metro')">📰 Metro TV</button>
+        <button class="ch-btn"        id="ch-animal" onclick="setChannel(this,'animal')">🌍 Earth Cam</button>
+        <button class="ch-btn"        id="ch-dw"     onclick="setChannel(this,'dw')">🗞️ DW News</button>
+      </div>
+      <div class="live-frame">
+        <iframe id="live-frame"
+          src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&rel=0&modestbranding=1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+
+  <!-- ===== MINI PLAYER ===== -->
+  <div id="mini-player" onclick="openFullPlayer()">
+    <div class="mini-cover-wrap" id="mini-cover-wrap">🎵</div>
+    <div class="mini-info">
+      <div class="mini-title" id="mini-title">Pilih lagu untuk dimainkan</div>
+      <div class="mini-artist" id="mini-artist">Music Mantis Player</div>
+    </div>
+    <div class="mini-controls">
+      <button class="mini-btn" title="Sebelumnya" onclick="event.stopPropagation();prevTrack()">⏮</button>
+      <button class="mini-play-btn" id="mini-play-btn" onclick="event.stopPropagation();togglePlay()">▶</button>
+      <button class="mini-btn" title="Berikutnya" onclick="event.stopPropagation();nextTrack()">⏭</button>
+    </div>
+    <div class="mini-progress"><div class="mini-progress-fill" id="mini-pf" style="width:0%"></div></div>
+  </div>
+
+  <!-- ===== FULL PLAYER ===== -->
+  <div id="full-player">
+    <div class="fp-back" onclick="closeFullPlayer()">‹</div>
+    <div class="fp-label">Sedang Diputar</div>
+    <div class="fp-cover-wrap" id="fp-cover">🎵</div>
+    <div class="fp-info">
+      <div class="fp-title" id="fp-title">—</div>
+      <div class="fp-artist" id="fp-artist">—</div>
+    </div>
+    <div class="fp-progress-wrap" id="fp-prog-wrap">
+      <div class="fp-progress-bar"><div class="fp-progress-fill" id="fp-pf" style="width:0%"></div></div>
+      <div class="fp-times"><span id="fp-cur">0:00</span><span id="fp-tot">0:00</span></div>
+    </div>
+    <div class="fp-controls">
+      <button class="fp-ctrl" id="fp-shuf" onclick="toggleShuffle()" title="Acak">🔀</button>
+      <button class="fp-ctrl" onclick="prevTrack()">⏮</button>
+      <button class="fp-play" id="fp-play-btn" onclick="togglePlay()">▶</button>
+      <button class="fp-ctrl" onclick="nextTrack()">⏭</button>
+      <button class="fp-ctrl" id="fp-rep" onclick="toggleRepeat()" title="Ulangi">🔁</button>
+    </div>
+    <div class="fp-extras">
+      <div class="fp-extra" onclick="toggleLike()">
+        <span id="like-icon">🤍</span><span>Like</span>
+      </div>
+      <div class="fp-extra">
+        <span>🎼</span><span>Lirik</span>
+      </div>
+      <div class="fp-extra">
+        <span>📤</span><span>Share</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav>
+    <button class="nav-btn active" id="nav-home"  onclick="go('home')">
+      <span class="nav-icon">🏠</span><span class="nav-label">Beranda</span>
+    </button>
+    <button class="nav-btn" id="nav-music" onclick="go('music')">
+      <span class="nav-icon">🎵</span><span class="nav-label">Musik</span>
+    </button>
+    <button class="nav-btn" id="nav-video" onclick="go('video')">
+      <span class="nav-icon">🎬</span><span class="nav-label">Video</span>
+    </button>
+    <button class="nav-btn" id="nav-live"  onclick="go('live')">
+      <span class="nav-icon">📺</span><span class="nav-label">Live TV</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<script>
+/* ============================================================
+   CONFIG – Jamendo (free, legal, no-ads music API)
+   Daftar API key gratis di: https://devportal.jamendo.com/
+   ============================================================ */
+const JAMENDO_ID   = 'b6747d04';
+const JAMENDO_BASE = 'https://api.jamendo.com/v3.0';
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const audio = new Audio();
+audio.crossOrigin = 'anonymous';
+let tracks      = [];
+let currentIdx  = -1;
+let isPlaying   = false;
+let isShuffle   = false;
+let isRepeat    = false;
+let liked       = new Set();
+let currentTag  = '';
+let searchTimer = null;
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function go(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const page = document.getElementById(tab);
+  const btn  = document.getElementById('nav-' + tab);
+  if (page) page.classList.add('active');
+  if (btn)  btn.classList.add('active');
+  if (tab === 'music' && tracks.length === 0) loadTracks();
+}
+
+function goTV(ch) {
+  go('live');
+  setTimeout(() => { const b = document.getElementById('ch-' + ch); if (b) setChannel(b, ch); }, 120);
+}
+
+/* ============================================================
+   LIVE TV
+   ============================================================ */
+const CHANNELS = {
+  lofi:   'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&rel=0&modestbranding=1',
+  nasa:   'https://www.youtube.com/embed/21X5lGlDOfg?autoplay=1&rel=0&modestbranding=1',
+  jazz:   'https://www.youtube.com/embed/Dx5qFachd3A?autoplay=1&rel=0&modestbranding=1',
+  tvri:   'https://www.youtube.com/embed/oDp1W2QBll0?autoplay=1&rel=0&modestbranding=1',
+  metro:  'https://www.youtube.com/embed/ni7JzmBnWns?autoplay=1&rel=0&modestbranding=1',
+  animal: 'https://www.youtube.com/embed/ydYDqZQpim8?autoplay=1&rel=0&modestbranding=1',
+  dw:     'https://www.youtube.com/embed/F5GLxLVgNxM?autoplay=1&rel=0&modestbranding=1',
+};
+
+function setChannel(btn, ch) {
+  document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('live-frame').src = CHANNELS[ch];
+}
+
+/* ============================================================
+   JAMENDO API FETCH
+   ============================================================ */
+async function fetchJamendo({ tags = '', search = '', order = 'popularity_week', limit = 30 } = {}) {
+  let url = `${JAMENDO_BASE}/tracks/?client_id=${JAMENDO_ID}`;
+  url += `&format=json&limit=${limit}&imagesize=300&audioformat=mp31&include=musicinfo`;
+  if (tags)   url += `&tags=${encodeURIComponent(tags)}`;
+  if (search) url += `&search=${encodeURIComponent(search)}`;
+  if (order)  url += `&order=${order}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  if (data.headers?.status !== 'success') throw new Error(data.headers?.error_message || 'API error');
+  return data.results || [];
+}
+
+/* ============================================================
+   LOAD & RENDER TRACKS
+   ============================================================ */
+async function loadTracks(opts = {}) {
+  showLoading('music-tracks');
+  try {
+    const result = await fetchJamendo(opts);
+    tracks = result;
+    renderTracks('music-tracks', tracks, true);
+  } catch (err) {
+    console.error('Jamendo error:', err);
+    showError('music-tracks');
+  }
+}
+
+async function loadHomeTracks() {
+  showLoading('home-tracks');
+  try {
+    const result = await fetchJamendo({ order: 'popularity_week', limit: 30 });
+    if (tracks.length === 0) tracks = result; // share with music page
+    renderTracks('home-tracks', result.slice(0, 6), false);
+  } catch {
+    document.getElementById('home-tracks').innerHTML =
+      `<div style="padding:20px;text-align:center;color:var(--text2);font-size:13px;">⚠️ Tidak dapat memuat. Periksa koneksi internet.</div>`;
+  }
+}
+
+function renderTracks(containerId, list, showIdx) {
+  const el = document.getElementById(containerId);
+  if (!list || list.length === 0) {
+    el.innerHTML = `<div class="error-state"><div class="ei">🎵</div><h3>Tidak Ada Lagu</h3><p>Coba kata kunci atau genre lain.</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map((t, i) => `
+    <div class="track-item${currentIdx === i && containerId === 'music-tracks' ? ' playing' : ''}"
+         id="ti-${containerId}-${i}" onclick="playTrack(${i}, '${containerId}')">
+      <img class="track-cover" src="${esc(t.image)}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="" />
+      <div class="track-cover-placeholder">🎵</div>
+      <div class="track-info">
+        <div class="track-name${currentIdx === i && containerId === 'music-tracks' ? ' active-track' : ''}">${esc(t.name)}</div>
+        <div class="track-artist">${esc(t.artist_name)}</div>
+      </div>
+      <div class="track-dur">${dur(t.duration)}</div>
+      <button class="play-btn-small${currentIdx === i && isPlaying && containerId === 'music-tracks' ? ' playing-btn' : ''}"
+              onclick="event.stopPropagation();playTrack(${i},'${containerId}')">
+        ${currentIdx === i && isPlaying && containerId === 'music-tracks' ? '⏸' : '▶'}
+      </button>
+    </div>`).join('');
+}
+
+function showLoading(id) {
+  document.getElementById(id).innerHTML =
+    `<div class="loading"><div class="spinner"></div>Memuat dari Jamendo...</div>`;
+}
+function showError(id) {
+  document.getElementById(id).innerHTML = `
+    <div class="error-state">
+      <div class="ei">😔</div>
+      <h3>Gagal Memuat Musik</h3>
+      <p>Tidak dapat terhubung ke Jamendo.<br>Periksa koneksi internet dan coba lagi.</p>
+      <button class="retry-btn" onclick="loadTracks()">🔄 Coba Lagi</button>
+    </div>`;
+}
+
+/* ============================================================
+   AUDIO PLAYER
+   ============================================================ */
+function playTrack(idx, fromContainer) {
+  // If tapping home tracks, switch to shared tracks list
+  if (fromContainer === 'home-tracks' && tracks.length === 0) return;
+
+  if (currentIdx === idx && audio.src) { togglePlay(); return; }
+
+  const track = tracks[idx];
+  if (!track?.audio) return;
+
+  currentIdx = idx;
+  audio.src  = track.audio;
+
+  audio.play().catch(() => {
+    // Some tracks may not be available; skip to next
+    if (idx + 1 < tracks.length) playTrack(idx + 1);
+  });
+}
+
+function togglePlay() {
+  if (!audio.src) return;
+  isPlaying ? audio.pause() : audio.play();
+}
+
+function nextTrack() {
+  if (!tracks.length) return;
+  playTrack(isShuffle ? rnd() : (currentIdx + 1) % tracks.length);
+}
+
+function prevTrack() {
+  if (!tracks.length) return;
+  if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+  playTrack(isShuffle ? rnd() : (currentIdx - 1 + tracks.length) % tracks.length);
+}
+
+function toggleShuffle() {
+  isShuffle = !isShuffle;
+  document.getElementById('fp-shuf').classList.toggle('on', isShuffle);
+}
+
+function toggleRepeat() {
+  isRepeat = !isRepeat;
+  audio.loop = isRepeat;
+  document.getElementById('fp-rep').classList.toggle('on', isRepeat);
+}
+
+function toggleLike() {
+  const id = tracks[currentIdx]?.id;
+  if (!id) return;
+  liked.has(id) ? liked.delete(id) : liked.add(id);
+  document.getElementById('like-icon').textContent = liked.has(id) ? '❤️' : '🤍';
+}
+
+function rnd() { return Math.floor(Math.random() * tracks.length); }
+
+/* ============================================================
+   PLAYER UI UPDATE
+   ============================================================ */
+function updatePlayerUI() {
+  const t = tracks[currentIdx];
+  if (!t) return;
+
+  // Mini player
+  document.getElementById('mini-player').classList.add('visible');
+  const cw = document.getElementById('mini-cover-wrap');
+  cw.innerHTML = t.image
+    ? `<img src="${esc(t.image)}" onerror="this.parentElement.innerHTML='🎵'" alt="" />`
+    : '🎵';
+  document.getElementById('mini-title').textContent  = t.name;
+  document.getElementById('mini-artist').textContent = t.artist_name;
+
+  // Full player
+  document.getElementById('fp-cover').innerHTML = t.image
+    ? `<img src="${esc(t.image)}" onerror="this.parentElement.innerHTML='🎵'" alt="" />`
+    : '🎵';
+  document.getElementById('fp-title').textContent  = t.name;
+  document.getElementById('fp-artist').textContent = t.artist_name;
+  document.getElementById('fp-tot').textContent    = dur(t.duration);
+  document.getElementById('like-icon').textContent = liked.has(t.id) ? '❤️' : '🤍';
+
+  updateBtns();
+  highlightList();
+}
+
+function updateBtns() {
+  const icon = isPlaying ? '⏸' : '▶';
+  document.getElementById('mini-play-btn').textContent  = icon;
+  document.getElementById('fp-play-btn').textContent    = icon;
+}
+
+function highlightList() {
+  document.querySelectorAll('.track-item').forEach((el, i) => {
+    el.classList.toggle('playing', i === currentIdx);
+    const nm = el.querySelector('.track-name'); if (nm) nm.classList.toggle('active-track', i === currentIdx);
+    const pb = el.querySelector('.play-btn-small');
+    if (pb) { pb.classList.toggle('playing-btn', i === currentIdx && isPlaying); pb.textContent = (i === currentIdx && isPlaying) ? '⏸' : '▶'; }
+  });
+}
+
+/* ============================================================
+   FULL PLAYER MODAL
+   ============================================================ */
+function openFullPlayer()  { document.getElementById('full-player').classList.add('visible'); }
+function closeFullPlayer() { document.getElementById('full-player').classList.remove('visible'); }
+
+document.getElementById('fp-prog-wrap').addEventListener('click', function(e) {
+  if (!audio.duration) return;
+  const bar  = this.querySelector('.fp-progress-bar');
+  const rect = bar.getBoundingClientRect();
+  audio.currentTime = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)) * audio.duration;
+});
+
+/* ============================================================
+   GENRE & SEARCH
+   ============================================================ */
+function setGenre(el, tag) {
+  document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentTag = tag;
+  document.getElementById('music-search').value = '';
+  loadTracks({ tags: tag });
+}
+
+document.getElementById('music-search').addEventListener('keyup', e => {
+  clearTimeout(searchTimer);
+  if (e.key === 'Enter') { doSearch(); return; }
+  searchTimer = setTimeout(doSearch, 700);
+});
+
+function doSearch() {
+  const q = document.getElementById('music-search').value.trim();
+  loadTracks(q ? { search: q } : { tags: currentTag });
+}
+
+/* ============================================================
+   AUDIO EVENTS
+   ============================================================ */
+audio.addEventListener('play',  () => { isPlaying = true;  updateBtns(); highlightList(); });
+audio.addEventListener('pause', () => { isPlaying = false; updateBtns(); highlightList(); });
+audio.addEventListener('loadedmetadata', updatePlayerUI);
+audio.addEventListener('ended', () => { isPlaying = false; if (!isRepeat) nextTrack(); });
+audio.addEventListener('error', () => { if (currentIdx + 1 < tracks.length) nextTrack(); });
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  document.getElementById('mini-pf').style.width = pct + '%';
+  document.getElementById('fp-pf').style.width   = pct + '%';
+  document.getElementById('fp-cur').textContent  = fmt(audio.currentTime);
+});
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function dur(s) { if (!s) return '—'; const m = Math.floor(s/60), sec = Math.floor(s%60); return `${m}:${String(sec).padStart(2,'0')}`; }
+function fmt(s) { const m = Math.floor(s/60), sec = Math.floor(s%60); return `${m}:${String(sec).padStart(2,'0')}`; }
+function esc(v) { return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadHomeTracks();
+</script>
+</body>
+</html>
